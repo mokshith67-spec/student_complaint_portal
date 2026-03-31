@@ -3,36 +3,33 @@ import os
 
 FILE = "complaints.xlsx"
 
+def create_file():
+    if not os.path.exists(FILE):
+        df = pd.DataFrame(columns=["Roll", "Category", "Complaint", "Status"])
+        df.to_excel(FILE, index=False)
+
 def save_complaint(roll, category, complaint):
-    data = {
+    create_file()
+    df = pd.read_excel(FILE)
+
+    new_data = pd.DataFrame({
         "Roll": [roll],
         "Category": [category],
         "Complaint": [complaint],
         "Status": ["Pending"]
-    }
+    })
 
-    df = pd.DataFrame(data)
-
-    if os.path.exists(FILE):
-        old = pd.read_excel(FILE)
-        new = pd.concat([old, df], ignore_index=True)
-        new.to_excel(FILE, index=False)
-    else:
-        df.to_excel(FILE, index=False)
-
+    df = pd.concat([df, new_data], ignore_index=True)
+    df.to_excel(FILE, index=False)
 
 def load_complaints():
-    if os.path.exists(FILE):
-        return pd.read_excel(FILE)
-    else:
-        return pd.DataFrame(columns=["Roll","Category","Complaint","Status"])
-
+    create_file()
+    return pd.read_excel(FILE)
 
 def update_status(index, status):
     df = pd.read_excel(FILE)
     df.loc[index, "Status"] = status
     df.to_excel(FILE, index=False)
-
 
 def delete_complaint(index):
     df = pd.read_excel(FILE)
