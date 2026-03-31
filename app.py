@@ -1,3 +1,11 @@
+import streamlit as st
+from login import student_login, admin_login
+from database import save_complaint, load_complaints, update_status, delete_complaint
+from dashboard import show_dashboard
+
+st.set_page_config(page_title="Student Complaint System", layout="wide")
+
+# Professional UI
 st.markdown("""
 <style>
 .big-title {
@@ -11,17 +19,8 @@ st.markdown("""
 
 st.markdown('<p class="big-title">Student Complaint Management System</p>', unsafe_allow_html=True)
 
-import streamlit as st
-from login import student_login, admin_login
-from database import save_complaint, load_complaints, update_status, delete_complaint
-from dashboard import show_dashboard
-
-st.set_page_config(page_title="Student Complaint System", layout="wide")
-
 menu = ["Home", "Student Login", "Admin Login"]
 choice = st.sidebar.selectbox("Menu", menu)
-
-st.title("Student Complaint Management System")
 
 if choice == "Home":
     st.write("Welcome to Student Complaint Portal")
