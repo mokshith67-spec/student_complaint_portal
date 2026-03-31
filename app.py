@@ -1,39 +1,74 @@
 import streamlit as st
-from database import save_complaint
+from login import student_login, admin_login
+from database import save_complaint, load_complaints, update_status, delete_complaint
+from dashboard import show_dashboard
 
-st.set_page_config(page_title="Student Complaint Portal")
+st.set_page_config(page_title="Student Complaint System", layout="wide")
 
-st.title("Student Complaint Portal")
-
-menu = ["Student Login", "Submit Complaint"]
+menu = ["Home", "Student Login", "Admin Login"]
 choice = st.sidebar.selectbox("Menu", menu)
 
-if choice == "Student Login":
-    st.subheader("Login")
-    name = st.text_input("Enter Name")
-    roll = st.text_input("Enter Roll Number")
+st.title("Student Complaint Management System")
+
+if choice == "Home":
+    st.write("Welcome to Student Complaint Portal")
+
+elif choice == "Student Login":
+    st.subheader("Student Login")
+    username = st.text_input("Roll Number")
+    password = st.text_input("Password", type="password")
 
     if st.button("Login"):
-        st.success(f"Welcome {name}")
+        if student_login(username, password):
+            st.success("Login Successful")
 
-elif choice == "Submit Complaint":
-    st.subheader("Submit Your Complaint")
+            category = st.selectbox("Complaint Category",
+            ["Academic","Hostel","Transport","Faculty","Infrastructure","Ragging","Exams","Canteen","Other"])
 
-    name = st.text_input("Name")
-    roll = st.text_input("Roll Number")
+            complaint = st.text_area("Write Complaint")
 
-    complaint_type = st.selectbox(
-        "Complaint Type",
-        ["Academic", "Hostel", "Transport", "Faculty", "Infrastructure", "Other"]
-    )
+            if st.button("Submit Complaint"):
+                save_complaint(username, category, complaint)
+                st.success("Complaint Submitted")
 
-    priority = st.selectbox(
-        "Priority",
-        ["Low", "Medium", "High"]
-    )
+            st.subheader("Your Complaints")
+            data = load_complaints()
+            st.write(data[data["Roll"] == username])
 
-    complaint = st.text_area("Write Complaint")
+        else:
+            st.error("Invalid Login")
 
-    if st.button("Submit Complaint"):
-        save_complaint(name, roll, complaint_type, priority, complaint)
-        st.success("Complaint Submitted Successfully")
+
+elif choice == "Admin Login":
+    st.subheader("Admin Login")
+    username = st.text_input("Admin Username")
+    password = st.text_input("Admin Password", type="password")
+
+    if st.button("Login"):
+        if admin_login(username, password):
+            st.success("Admin Login Successful")
+
+            data = load_complaints()
+
+            st.subheader("All Complaints")
+            st.write(data)
+
+            show_dashboard(data)
+
+            st.subheader("Update Status")
+            index = st.number_input("Enter Complaint Index", min_value=0)
+            status = st.selectbox("Select Status", ["Pending","In Progress","Resolved","Rejected"])
+
+            if st.button("Update"):
+                update_status(index, status)
+                st.success("Status Updated")
+
+            st.subheader("Delete Complaint")
+            del_index = st.number_input("Enter Index to Delete", min_value=0)
+
+            if st.button("Delete"):
+                delete_complaint(del_index)
+                st.success("Deleted")
+
+        else:
+            st.error("Invalid Admin Login")
