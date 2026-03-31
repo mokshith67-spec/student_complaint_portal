@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 
 def show_dashboard(data):
     st.subheader("Complaint Statistics")
