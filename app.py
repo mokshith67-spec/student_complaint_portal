@@ -1,3 +1,16 @@
+st.markdown("""
+<style>
+.big-title {
+    font-size:40px;
+    font-weight:bold;
+    text-align:center;
+    color:#4CAF50;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown('<p class="big-title">Student Complaint Management System</p>', unsafe_allow_html=True)
+
 import streamlit as st
 from login import student_login, admin_login
 from database import save_complaint, load_complaints, update_status, delete_complaint
