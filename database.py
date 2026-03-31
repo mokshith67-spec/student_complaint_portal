@@ -1,14 +1,12 @@
 import pandas as pd
 import os
 
-FILE = "complaints.csv"
+FILE = "complaints.xlsx"
 
-def save_complaint(name, roll, complaint_type, priority, complaint):
+def save_complaint(roll, category, complaint):
     data = {
-        "Name": [name],
         "Roll": [roll],
-        "Type": [complaint_type],
-        "Priority": [priority],
+        "Category": [category],
         "Complaint": [complaint],
         "Status": ["Pending"]
     }
@@ -16,13 +14,27 @@ def save_complaint(name, roll, complaint_type, priority, complaint):
     df = pd.DataFrame(data)
 
     if os.path.exists(FILE):
-        df.to_csv(FILE, mode='a', header=False, index=False)
+        old = pd.read_excel(FILE)
+        new = pd.concat([old, df], ignore_index=True)
+        new.to_excel(FILE, index=False)
     else:
-        df.to_csv(FILE, index=False)
+        df.to_excel(FILE, index=False)
 
 
 def load_complaints():
     if os.path.exists(FILE):
-        return pd.read_csv(FILE)
+        return pd.read_excel(FILE)
     else:
-        return pd.DataFrame(columns=["Name","Roll","Type","Priority","Complaint","Status"])
+        return pd.DataFrame(columns=["Roll","Category","Complaint","Status"])
+
+
+def update_status(index, status):
+    df = pd.read_excel(FILE)
+    df.loc[index, "Status"] = status
+    df.to_excel(FILE, index=False)
+
+
+def delete_complaint(index):
+    df = pd.read_excel(FILE)
+    df = df.drop(index)
+    df.to_excel(FILE, index=False)
