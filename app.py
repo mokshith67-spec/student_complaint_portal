@@ -1,3 +1,6 @@
+import nltk
+nltk.download('punkt')
+
 import streamlit as st
 from login import student_login, admin_login
 from database import save_complaint, load_complaints, update_status, delete_complaint
