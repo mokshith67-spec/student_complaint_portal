@@ -2,13 +2,17 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data = pd.read_csv("complaints.csv")
+def show_dashboard():
+    st.title("Complaint Dashboard")
 
-st.title("Complaint Dashboard")
+    data = {
+        "Status": ["Pending", "In Progress", "Resolved"],
+        "Count": [10, 5, 15]
+    }
 
-status_count = data["status"].value_counts()
+    df = pd.DataFrame(data)
 
-fig, ax = plt.subplots()
-ax.pie(status_count, labels=status_count.index, autopct='%1.1f%%')
+    fig, ax = plt.subplots()
+    ax.pie(df["Count"], labels=df["Status"], autopct='%1.1f%%')
 
-st.pyplot(fig)
+    st.pyplot(fig)
