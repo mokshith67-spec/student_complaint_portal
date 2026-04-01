@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 
 def show_dashboard():
     st.title("Complaint Dashboard")
@@ -12,7 +11,6 @@ def show_dashboard():
 
     df = pd.DataFrame(data)
 
-    fig, ax = plt.subplots()
-    ax.pie(df["Count"], labels=df["Status"], autopct='%1.1f%%')
-
-    st.pyplot(fig)
+    st.subheader("Complaint Status")
+    st.bar_chart(df.set_index("Status"))
+    st.line_chart(df.set_index("Status"))
