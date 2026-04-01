@@ -1,18 +1,20 @@
 import streamlit as st
-from database import load_complaints
-from pdf_report import generate_pdf
+import sqlite3
+import pandas as pd
 
-st.title("Admin Panel - Student Complaints")
+def show_admin_panel():
+    st.title("Admin Panel")
 
-password = st.text_input("Enter Admin Password", type="password")
+    conn = sqlite3.connect("complaints.db")
+    df = pd.read_sql("SELECT rowid, * FROM complaints", conn)
 
-if password == "admin123":
-    data = load_complaints()
-    st.write(data)
+    st.dataframe(df)
 
-    if st.button("Generate PDF Report"):
-        generate_pdf(data)
-        with open("complaints_report.pdf", "rb") as f:
-            st.download_button("Download Report", f, file_name="Complaints_Report.pdf")
-else:
-    st.warning("Enter Admin Password to View Complaints")
+    complaint_id = st.number_input("Enter Complaint ID to Update", min_value=1)
+    status = st.selectbox("Update Status", ["Pending", "In Progress", "Resolved"])
+
+    if st.button("Update Status"):
+        conn.execute("UPDATE complaints SET status=? WHERE rowid=?",
+                     (status, complaint_id))
+        conn.commit()
+        st.success("Status Updated!")
