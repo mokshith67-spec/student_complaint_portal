@@ -1,13 +1,14 @@
 import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 
-def show_dashboard(data):
-    st.subheader("Complaint Statistics")
+data = pd.read_csv("complaints.csv")
 
-    if len(data) > 0:
-        st.write("Complaints by Category")
-        st.bar_chart(data["Category"].value_counts())
+st.title("Complaint Dashboard")
 
-        st.write("Complaints by Status")
-        st.bar_chart(data["Status"].value_counts())
-    else:
-        st.write("No complaints yet.")
+status_count = data["status"].value_counts()
+
+fig, ax = plt.subplots()
+ax.pie(status_count, labels=status_count.index, autopct='%1.1f%%')
+
+st.pyplot(fig)
