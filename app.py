@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
+
 import streamlit as st
 from dashboard import show_dashboard
 from complaint_form import show_complaint_form
